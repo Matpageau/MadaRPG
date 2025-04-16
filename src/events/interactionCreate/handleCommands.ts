@@ -49,6 +49,12 @@ module.exports = async (bot: Client, interaction: Interaction) => {
 
     await commandObject.callback(bot, interaction)
   } catch (error) {
-    console.log(`Il y a eu une erreure sur cette commande: ${error}`)
+    console.error(`Il y a eu une erreure sur cette commande:`)
+    if(error instanceof Error) {
+      console.error(error.message)
+      console.error(error.stack)
+    } else {
+      console.error(error)
+    }
   }
 }
