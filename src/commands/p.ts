@@ -26,7 +26,7 @@ const pingCommand: ICommand = {
         new ActionRowBuilder<ButtonBuilder>()
         .addComponents(
           new ButtonBuilder()
-          .setCustomId(`createMap-${interaction.user.id}`)
+          .setCustomId(`newGame-${interaction.user.id}`)
           .setLabel("Créer la carte")
           .setStyle(ButtonStyle.Secondary)
         )

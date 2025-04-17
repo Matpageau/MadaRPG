@@ -1,46 +1,68 @@
-import { createCanvas } from "canvas"
+import { createCanvas, loadImage } from "canvas"
 import { Game } from "./game"
 import { AttachmentBuilder, MessageComponentInteraction } from "discord.js"
-import { sendErrorEmbed } from "../controllers/controllerEmbeds"
+import { sendErrorEmbed } from "../../Utils/controllers/controllerEmbeds"
+import path from "path"
 
 export class Map {
-  static pixelMap: number[]
+  mapChannelId: string | null = "828518673244618752"
+  mapMessageId: string | null = null
+  pixelMap: [number, number][][] = []
+  tilesX = 161         //51
+  tilesY = 91          //29
+  tilePixelSize = 32
 
-  static createMapImage() {
-    const tilePixelSize = 30
-    const tilesX = 41
-    const tilesY = 31
+  constructor() {
+    this.generateMap()
+  }
 
-    const canvas = createCanvas(tilePixelSize * tilesX, tilePixelSize * tilesY)
+  async createMapImage() {
+    const atlas = await loadImage(path.join(__dirname, "../images/atlas.png"))
+    const canvas = createCanvas(this.tilePixelSize * this.tilesX, this.tilePixelSize * this.tilesY)
     const ctx = canvas.getContext("2d")
 
-    for (let y = 0; y < tilesY; y++) {
-      for (let x = 0; x < tilesX; x++) {
-        const color = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`
-        ctx.fillStyle = color
-        ctx.fillRect(x * tilePixelSize, y * tilePixelSize, tilePixelSize, tilePixelSize)
+    for (let y = 0; y < this.tilesY; y++) {
+      for (let x = 0; x < this.tilesX; x++) {
+        const [tileX, tileY] = this.pixelMap[y][x];
+
+        ctx.drawImage(
+          atlas,
+          tileX * this.tilePixelSize, tileY * this.tilePixelSize,
+          this.tilePixelSize, this.tilePixelSize,
+          x * this.tilePixelSize, y * this.tilePixelSize,
+          this.tilePixelSize, this.tilePixelSize
+        )
       }
     }
 
     return canvas.toBuffer('image/png');
   }
+
+  generateMap() {
+    for (let y = 0; y < this.tilesY; y++) {
+      this.pixelMap[y] = []
+      for (let x = 0; x < this.tilesX; x++) {        
+        this.pixelMap[y][x] = [0, Math.floor(Math.random() * 2)]
+      }      
+    }
+  }
   
-  static async updateOrCreateMapMessage(interaction: MessageComponentInteraction) {
-    const map = this.createMapImage()
+  async updateOrCreateMapMessage(interaction: MessageComponentInteraction) {
+    const map = await this.createMapImage()
     
-    if(Game.mapChannelId == null) {
+    if(this.mapChannelId == null) {
       return sendErrorEmbed(interaction, "L'id du channel de la carte est introuvable")
     }
     
     
-    const channel = await interaction.guild?.channels.fetch(Game.mapChannelId).catch(() => null);
+    const channel = await interaction.guild?.channels.fetch(this.mapChannelId).catch(() => null);
     if (!channel?.isTextBased()) {
       return sendErrorEmbed(interaction, "Le channel de la carte est introuvable")
     }
     
     let msg = null
-    if(Game.mapMessageId) {
-      msg = await channel.messages.fetch(Game.mapMessageId).catch(() => null);
+    if(this.mapMessageId) {
+      msg = await channel.messages.fetch(this.mapMessageId).catch(() => null);
     }
 
     const file = new AttachmentBuilder(map, { name: 'map.png' });
@@ -50,7 +72,7 @@ export class Map {
       msg.edit({files: [file]})
     } else {
       channel.send({files: [file]}).then((msg) => {
-        Game.mapMessageId = msg.id
+        this.mapMessageId = msg.id
       })
     }
   }

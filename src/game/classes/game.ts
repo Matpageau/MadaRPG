@@ -4,11 +4,13 @@ import { Map } from "./map"
 
 
 export class Game {
-  static mapChannelId: string | null = "828518673244618752"
-  static mapMessageId: string | null = null
-  static map: Map
+  map: Map
 
-  static setGameData(game: Game) {
+  constructor() {
+    this.map = new Map()
+  }
+
+  setGameData(game: Game) {
     fs.writeFileSync(path.join(process.cwd(), "./data/game.json"), JSON.stringify(game))
   }
 }
