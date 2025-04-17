@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, MessageComponentInteraction, MessageFlags } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Client, EmbedBuilder, MessageComponentInteraction, MessageFlags } from "discord.js";
 import { ICommand } from "../Interfaces/ICommand";
 import { Player } from "../game/classes/player";
 import { getPlayers, setPlayers } from "../Utils/datas";
@@ -8,8 +8,8 @@ const pingCommand: ICommand = {
   description: "Afficher son profil",
   options: [],
   
-  callback: (bot: Client, interaction: MessageComponentInteraction) => {
-    const playerArray: Player[] = getPlayers()
+  callback: (bot: Client, interaction: ChatInputCommandInteraction) => {
+    const playerArray = getPlayers()
 
     if(!playerArray.some((player: Player) => player.id == interaction.user.id)) {
       playerArray.push(new Player(interaction.user))
@@ -26,9 +26,8 @@ const pingCommand: ICommand = {
         new ActionRowBuilder<ButtonBuilder>()
         .addComponents(
           new ButtonBuilder()
-          .setCustomId(`deck-${interaction.user.id}`)
-          .setLabel("Deck")
-          .setEmoji("🃏")
+          .setCustomId(`createMap-${interaction.user.id}`)
+          .setLabel("Créer la carte")
           .setStyle(ButtonStyle.Secondary)
         )
       ]

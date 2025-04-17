@@ -1,9 +1,9 @@
-import { ApplicationCommandOptionData, PermissionsBitField } from "discord.js"
+import { ApplicationCommandOptionData, ChatInputCommandInteraction, Client, PermissionsBitField } from "discord.js"
 
 export interface ICommand {
   name: string
   description: string
-  callback: (...args: any[]) => any
+  callback: (bot: Client, interaction: ChatInputCommandInteraction, ...args: any[]) => any
   options: ApplicationCommandOptionData[]
   devOnly?: boolean
   testOnly?: boolean

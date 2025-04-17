@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path";
 import { Player } from "../game/classes/player";
+import { Game } from "../game/classes/game";
 
 export function getPlayers(): Player[] {
   return JSON.parse(fs.readFileSync(path.join(process.cwd(), "./data/players.json"), "utf-8"))
