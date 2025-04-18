@@ -9,6 +9,7 @@ const openDeck: IAction = {
   callback(bot: Client, interaction: MessageComponentInteraction) {
     const game = new Game()
     game.map.updateOrCreateMapMessage(interaction)
+    game.setGameData(game)
   }
 }
 
