@@ -1,16 +1,15 @@
-import { CanvasRenderingContext2D, createCanvas, Image, loadImage } from "canvas"
-import { AttachmentBuilder, MessageComponentInteraction } from "discord.js"
+import { createCanvas, loadImage } from "canvas"
+import { AttachmentBuilder, ChatInputCommandInteraction } from "discord.js"
 import { sendErrorEmbed } from "../../Utils/controllers/controllerEmbeds"
 import path from "path"
 import { Tile } from "./tile"
-import { ITile } from "../../Interfaces/ITile"
 
 export class Map {
   mapChannelId: string | null = "828518673244618752"
   mapMessageId: string | null = null
   pixelMap: [Tile][][] = []
-  tilesX = 51         //51
-  tilesY = 29         //29
+  tilesX = 21         //51
+  tilesY = 12         //29
   tilePixelSize = 32
 
   constructor() {
@@ -26,7 +25,7 @@ export class Map {
       }      
     }
 
-    this.createMoutains(3)
+    this.createMoutains(1)
     this.createTrees()
   }
 
@@ -82,7 +81,7 @@ export class Map {
     }
   }
   
-  async updateOrCreateMapMessage(interaction: MessageComponentInteraction) {
+  async updateOrCreateMapMessage(interaction: ChatInputCommandInteraction) {
     const map = await this.createMapImage()
     
     if(this.mapChannelId == null) {
@@ -101,7 +100,6 @@ export class Map {
 
     const file = new AttachmentBuilder(map, { name: 'map.png' });
 
-    interaction.deferUpdate()
     if(msg) {
       msg.edit({files: [file]})
     } else {

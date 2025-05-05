@@ -3,7 +3,7 @@ import { ICommand } from "../Interfaces/ICommand";
 import { Player } from "../game/classes/player";
 import { getPlayers, setPlayers } from "../Utils/datas";
 
-const pingCommand: ICommand = {
+const pCommand: ICommand = {
   name: "p",
   description: "Afficher son profil",
   options: [],
@@ -35,4 +35,4 @@ const pingCommand: ICommand = {
   }
 }
 
-export = pingCommand
+export = pCommand
